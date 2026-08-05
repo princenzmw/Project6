@@ -2,10 +2,18 @@ import streamlit as st
 import numpy as np
 import joblib
 
-# 1. Load the exported artifacts
-model = joblib.load("kenya_tea_model.pkl")
-scaler = joblib.load("crop_scaler.pkl")
-le = joblib.load("label_encoder.pkl")
+
+# 1. Cache the model loading to prevent CPU throttling
+@st.cache_resource
+def load_artifacts():
+    model = joblib.load("kenya_tea_model.pkl")
+    scaler = joblib.load("crop_scaler.pkl")
+    le = joblib.load("label_encoder.pkl")
+    return model, scaler, le
+
+
+# Load artifacts into memory (runs only once)
+model, scaler, le = load_artifacts()
 
 # 2. Define the UI Header and UX layout
 st.set_page_config(page_title="Kenya Crop Classifier", layout="centered")
