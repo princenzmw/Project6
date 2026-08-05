@@ -2,3 +2,4 @@ streamlit
 scikit-learn
 numpy
 joblib
+starlette==0.37.2
