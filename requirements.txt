@@ -1,5 +1,12 @@
 streamlit
-scikit-learn==1.6.1
+scikit-learn>=1.6.1
 numpy
 joblib
-starlette==0.37.2
+starlette>=0.37.2
+pandas
+# streamlit>=1.59.0
+# scikit-learn>=1.7.2
+# numpy>=2.3.0
+# joblib>=1.5.2
+# starlette>=0.37.2
+# pandas>=2.3.0
