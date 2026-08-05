@@ -5,6 +5,9 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 
+# MUST BE THE VERY FIRST STREAMLIT COMMAND
+st.set_page_config(page_title="Kenya Crop Classifier", layout="centered")
+
 
 # 1. Train the model dynamically on boot and cache it in memory
 @st.cache_resource
@@ -68,7 +71,6 @@ def build_and_train_model():
 model, le = build_and_train_model()
 
 # 2. Define the UI Header and UX layout
-st.set_page_config(page_title="Kenya Crop Classifier", layout="centered")
 st.title("🌱 Kenya Multi-Crop Suitability Classifier")
 st.markdown(
     "Enter the location and environmental parameters below to determine crop suitability."
