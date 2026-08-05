@@ -1,6 +1,5 @@
-streamlit==1.32.0
-starlette==0.36.3
+streamlit
 scikit-learn==1.6.1
-numpy==1.26.4
+numpy
 pandas
 joblib
