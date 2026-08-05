@@ -1,19 +1,71 @@
 import streamlit as st
 import pandas as pd
-import joblib
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
 
 
-# 1. Cache the model loading to prevent CPU throttling
+# 1. Train the model dynamically on boot and cache it in memory
 @st.cache_resource
-def load_artifacts():
-    # Load the unified pipeline (contains the encoder, scaler, and tree)
-    model = joblib.load("multicrop_pipeline.pkl")
-    le = joblib.load("label_encoder.pkl")
-    return model, le
+def build_and_train_model():
+    # Load dataset (Ensure this CSV is in your GitHub repo)
+    df = pd.read_csv("kenya_multicrop_suitability.csv")
+
+    categorical_features = ["county"]
+    numeric_features = [
+        "altitude_m",
+        "annual_rainfall_mm",
+        "temp_max_c",
+        "temp_min_c",
+        "soil_ph",
+        "humidity_pct",
+        "soil_nitrogen_pct",
+        "organic_carbon_pct",
+        "slope_degrees",
+    ]
+
+    X = df[categorical_features + numeric_features]
+    y = df["suitable_tea"]
+
+    # Encode target
+    le = LabelEncoder()
+    y_encoded = le.fit_transform(y)
+
+    # Build preprocessing and model pipeline
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("num", StandardScaler(), numeric_features),
+            (
+                "cat",
+                OneHotEncoder(handle_unknown="ignore", sparse_output=False),
+                categorical_features,
+            ),
+        ]
+    )
+
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            (
+                "classifier",
+                DecisionTreeClassifier(
+                    max_depth=7,
+                    min_samples_split=5,
+                    min_samples_leaf=3,
+                    random_state=42,
+                ),
+            ),
+        ]
+    )
+
+    # Train the pipeline in memory
+    pipeline.fit(X, y_encoded)
+    return pipeline, le
 
 
-# Load artifacts into memory (runs only once)
-model, le = load_artifacts()
+# Load artifacts into memory (trains in milliseconds, runs only once)
+model, le = build_and_train_model()
 
 # 2. Define the UI Header and UX layout
 st.set_page_config(page_title="Kenya Crop Classifier", layout="centered")
