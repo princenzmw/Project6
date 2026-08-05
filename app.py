@@ -1,5 +1,5 @@
 import streamlit as st
-import numpy as np
+import pandas as pd
 import joblib
 
 
@@ -44,8 +44,9 @@ with col3:
 
 # 4. Prediction Execution
 if st.button("Evaluate Suitability", type="primary"):
-    # Structure inputs exactly as they were during training
-    input_data = np.array(
+
+    # Structure inputs as a DataFrame with the EXACT feature names used in training
+    input_data = pd.DataFrame(
         [
             [
                 altitude,
@@ -58,10 +59,21 @@ if st.button("Evaluate Suitability", type="primary"):
                 carbon,
                 slope,
             ]
-        ]
+        ],
+        columns=[
+            "altitude_m",
+            "annual_rainfall_mm",
+            "temp_max_c",
+            "temp_min_c",
+            "soil_ph",
+            "humidity_pct",
+            "soil_nitrogen_pct",
+            "organic_carbon_pct",
+            "slope_degrees",
+        ],
     )
 
-    # Scale inputs
+    # Scale inputs (scaler will now recognize the feature names)
     scaled_data = scaler.transform(input_data)
 
     # Predict
